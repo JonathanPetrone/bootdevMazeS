@@ -2,22 +2,22 @@ from window import *
 
 def main():
     print("Maze solver")
-    # Step 1: Create points
-    start_point = Point(5, 5)
-    end_point = Point(5, 25)
+    # Create a window instance
+    win = Window(400, 400)
 
-    # Step 2: Create a line
-    line = Line(start_point, end_point)
-    line2 = Line(Point(5, 5), Point(25, 5))
+    # Define points for your cells
+    top_left = Point(50, 50)
+    bottom_right = Point(100, 100)
 
-    # Step 3: Create a window
-    window = Window(500, 500)
+    # Create one or more cell instances
+    cell1 = Cell(top_left, bottom_right, win)
+    cell2 = Cell(Point(100, 50), Point(150, 100), win)
 
-    # Step 4: Draw the line
-    window.draw_line(line, 'blue')
-    window.draw_line(line2, 'blue')
+    # Draw your cell(s) on the canvas
+    cell1.draw()
+    cell2.draw()
 
-    # Step 5: Wait for close
-    window.wait_for_close()
+    # Hold the window open until closed by the user
+    win.wait_for_close()
 
 main()
