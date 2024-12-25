@@ -19,12 +19,24 @@ class TestMaze(unittest.TestCase):
         m1 = Maze(0, 0, num_rows, num_cols, 10, 10)
         self.assertEqual(
             len(m1._cells),
-            num_rows,  # Reflects the number of rows
+            num_rows, 
         )
         self.assertEqual(
             len(m1._cells[0]),
-            num_cols,  # Reflects the number of columns
+            num_cols, 
         )
+    
+    def test_break_entrance_and_exit(self):
+        maze = Maze(0, 0, 2, 2, 10, 10, None)
+        
+        maze._break_entrance_and_exit()
+        
+        entrance_cell = maze._cells[0][0]
+        exit_cell = maze._cells[-1][-1]
+        
+        self.assertFalse(entrance_cell.has_top_wall)
+        self.assertFalse(exit_cell.has_bottom_wall)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -27,8 +27,6 @@ class Window:
     def draw_line(self, line, fill_color):
         line.draw(self.canvas, fill_color)
 
-
-
 class Point:
     def __init__(self, x, y):
         self.x = x
@@ -68,18 +66,30 @@ class Cell:
             if self.has_left_wall:
                 line = Line(Point(self._x1, self._y1), Point(self._x1, self._y2))
                 self._win.draw_line(line, "black")
+            else:
+                line = Line(Point(self._x1, self._y1), Point(self._x1, self._y2))
+                self._win.draw_line(line, "#d9d9d9")
 
             if self.has_right_wall:
                 line = Line(Point(self._x2, self._y1), Point(self._x2, self._y2))
                 self._win.draw_line(line, "black")
+            else:
+                line = Line(Point(self._x2, self._y1), Point(self._x2, self._y2))
+                self._win.draw_line(line, "#d9d9d9")
 
             if self.has_top_wall:
                 line = Line(Point(self._x1, self._y1), Point(self._x2, self._y1))
                 self._win.draw_line(line, "black")
+            else:
+                line = Line(Point(self._x1, self._y1), Point(self._x2, self._y1))
+                self._win.draw_line(line, "#d9d9d9")
 
             if self.has_bottom_wall:
                 line = Line(Point(self._x1, self._y2), Point(self._x2, self._y2))
                 self._win.draw_line(line, "black")
+            else:
+                line = Line(Point(self._x1, self._y2), Point(self._x2, self._y2))
+                self._win.draw_line(line, "#d9d9d9")
     
     def draw_move(self, to_cell, undo=False):
         val_cell_one_x = (self._x1 + self._x2) / 2
@@ -143,4 +153,13 @@ class Maze:
         self.win.redraw()
         time.sleep(0.05)
 
+    def _break_entrance_and_exit(self):
+        entrance_cell = self._cells[0][0]  # Notice we use _grid to get the actual cell
+        exit_cell = self._cells[-1][-1]
+
+        entrance_cell.has_top_wall = False
+        entrance_cell.draw()  # Directly call draw on the cell
+
+        exit_cell.has_bottom_wall = False
+        exit_cell.draw()  
 
