@@ -1,15 +1,18 @@
 from window import *
 
 def main():
-    print("Maze solver")
-    
-    win = Window(800, 600)
-    maze = Maze(100, 100, 10, 10, 50, 50, win)
+    # Define variables for size and window
+    num_rows, num_cols = 10, 10
+    cell_size = 50
+    window = Window(num_cols * cell_size + 20, num_rows * cell_size + 20)
 
-    # Modify the entrance and exit immediately after the maze is created
-    maze._break_entrance_and_exit()
-    
-    # Start the window loop after making all necessary changes
-    win.wait_for_close()
+    # Create the maze with x1, y1 as starting positions
+    maze = Maze(0, 0, num_rows, num_cols, cell_size, cell_size, window)
 
-main()
+    # Invoke the draw function
+    maze.draw_maze()
+  
+    window.wait_for_close()
+
+if __name__ == "__main__":
+    main()

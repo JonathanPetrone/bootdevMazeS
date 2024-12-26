@@ -1,5 +1,6 @@
 from tkinter import Tk, BOTH, Canvas
 import time
+import random
 
 class Window:
     def __init__(self, width, height):
@@ -26,6 +27,15 @@ class Window:
 
     def draw_line(self, line, fill_color):
         line.draw(self.canvas, fill_color)
+    
+    def wait_for_close(self):
+        self.window_running = True
+        self._check_window_state()
+
+    def _check_window_state(self):
+        if self.window_running:
+            self.redraw()
+            self.root.after(100, self._check_window_state)  # Check the window state every 100ms to prevent freezing
 
 class Point:
     def __init__(self, x, y):
@@ -59,6 +69,7 @@ class Cell:
         self._y1 = point_1.y
         self._y2 = point_2.y
         self._win = win
+        self.visited = False
         CELL_SIZE = 50
 
     def draw(self):
@@ -113,9 +124,11 @@ class Maze:
         cell_size_x,
         cell_size_y,
         win=None,
+        margin=10  # Set margin to 10 as default
     ):
-        self.x1 = x1
-        self.y1 = y1
+        self.margin = margin
+        self.x1 = x1 + self.margin
+        self.y1 = y1 + self.margin
         self.num_rows = num_rows
         self.num_cols = num_cols
         self.cell_size_x = cell_size_x
@@ -162,4 +175,79 @@ class Maze:
 
         exit_cell.has_bottom_wall = False
         exit_cell.draw()  
+    
+    def _break_walls_r(self, i, j):
+        current = self._cells[i][j]
+        current.visited = True
+
+        directions = {
+            "UP": (-1, 0),
+            "DOWN": (1, 0),
+            "LEFT": (0, -1),
+            "RIGHT": (0, 1)
+        }
+
+        while True:
+            list_cells = []
+            # For cell above
+            if (i-1) >= 0 and (i-1) < self.num_rows and j >= 0 and j < self.num_cols:
+                if (i-1) >= 0 and not self._cells[i-1][j].visited:
+                    list_cells.append(((i-1, j), "UP"))
+            # For cell below
+            if (i+1) >= 0 and (i+1) < self.num_rows and j >= 0 and j < self.num_cols:
+                if not self._cells[i+1][j].visited:
+                    list_cells.append(((i+1, j), "DOWN"))
+            # For left cell
+            if (i >= 0 and i < self.num_rows and (j-1) >= 0 and (j-1) < self.num_cols):
+                if not self._cells[i][j-1].visited:
+                    list_cells.append(((i, j-1), "LEFT"))
+            # For right cell
+            if (i >= 0 and i < self.num_rows and (j+1) >= 0 and (j+1) < self.num_cols):
+                if not self._cells[i][j+1].visited:
+                    list_cells.append(((i, j+1), "RIGHT"))
+            
+            # Check for possible moves
+            if list_cells:
+                # Randomly select a cell and direction
+                (new_i, new_j), direction = random.choice(list_cells)
+                
+                # Use direction to knock down walls
+                if direction == "UP":
+                    # Modify walls for UP...
+                    current.has_top_wall = False
+                    # Knock down the bottom wall of the cell above
+                    self._cells[new_i][new_j].has_bottom_wall = False
+                    self._break_walls_r(new_i, new_j)
+                elif direction == "DOWN":
+                    # Modify walls for DOWN...
+                    current.has_bottom_wall = False
+                    # Knock down the top wall of the cell below
+                    self._cells[new_i][new_j].has_top_wall = False
+                    self._break_walls_r(new_i, new_j)
+                elif direction == "LEFT":
+                    # Modify walls for LEFT...
+                    current.has_left_wall = False
+                    # Knock down the right wall of the cell to the left
+                    self._cells[new_i][new_j].has_right_wall = False
+                    self._break_walls_r(new_i, new_j)
+                elif direction == "RIGHT":
+                    # Modify walls for RIGHT...
+                    current.has_right_wall = False
+                    # Knock down the left wall of the cell to the right
+                    self._cells[new_i][new_j].has_left_wall = False
+                    self._break_walls_r(new_i, new_j)
+            else:
+                return
+    def draw_maze(self):
+        # Draw entrance and exit
+        self._break_entrance_and_exit()
+
+        # Break walls recursively and illustrate the process
+        self._break_walls_r(0, 0)
+
+        # Draw the complete maze
+        for i in range(self.num_rows):
+            for j in range(self.num_cols):
+                self._draw_cell(i, j)
+
 
