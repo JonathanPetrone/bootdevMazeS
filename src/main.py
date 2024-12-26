@@ -11,6 +11,7 @@ def main():
 
     # Invoke the draw function
     maze.draw_maze()
+    maze.solve()
   
     window.wait_for_close()
 
