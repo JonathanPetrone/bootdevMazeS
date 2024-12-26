@@ -238,6 +238,7 @@ class Maze:
                     self._break_walls_r(new_i, new_j)
             else:
                 return
+            
     def draw_maze(self):
         # Draw entrance and exit
         self._break_entrance_and_exit()
@@ -245,9 +246,16 @@ class Maze:
         # Break walls recursively and illustrate the process
         self._break_walls_r(0, 0)
 
+        # Reset the visited status after breaking walls
+        self._reset_cells_visited()
+
         # Draw the complete maze
         for i in range(self.num_rows):
             for j in range(self.num_cols):
                 self._draw_cell(i, j)
 
+    def _reset_cells_visited(self):
+        for i in range(self.num_rows):
+            for j in range(self.num_cols):
+                self._cells[i][j].visited = False
 

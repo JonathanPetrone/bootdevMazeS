@@ -37,6 +37,22 @@ class TestMaze(unittest.TestCase):
         self.assertFalse(entrance_cell.has_top_wall)
         self.assertFalse(exit_cell.has_bottom_wall)
 
+    def test_reset_cells_visited(self):
+        # Provide necessary arguments for Maze initialization
+        maze = Maze(x1=0, y1=0, cell_size_x=10, cell_size_y=10, num_rows=3, num_cols=3)
+        
+        # Manually visit some cells
+        maze._cells[0][0].visited = True
+        maze._cells[1][1].visited = True
+        maze._cells[2][2].visited = True
+        
+        # Reset visited properties
+        maze._reset_cells_visited()
+        
+        # Check that all cells' visited are now False
+        for i in range(maze.num_rows):
+            for j in range(maze.num_cols):
+                self.assertFalse(maze._cells[i][j].visited, f"Cell at ({i}, {j}) was not reset")
 
 if __name__ == '__main__':
     unittest.main()
